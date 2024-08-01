@@ -8,14 +8,15 @@ const getAllSongs=async()=>{
       return error;
     }
 }
-const getOneSong=async(id)=>{
-    try {
-        const oneSong=await db.one("Select * FROM songs WHERE id=$1 ",id);
-        return oneSong;
-    } catch (error) {
-      return error;
-    }
-}
+
+const getOneSong = async (id) => {
+  try {
+    const oneSong = await db.one("SELECT * FROM songs WHERE id=$1", id);
+    return oneSong;
+  } catch (error) {
+    return error;
+  }
+};
 const createSong=async(song)=>{
     try {
         const newSong=await db.one("INSERT INTO songs(name,artist,album,time,is_favorite)VALUES($1,$2,$3,$4,$5) RETURNING *",[song.name,song.artist,song.album,song.time,song.is_favorite]);
@@ -32,6 +33,30 @@ const destroySong=async(id)=>{
       return error;
     }
 }
+const updateSong = async (id, song) => {
+  const {
+    name,artist,album,time,is_favorite
+  } = song;
+
+  try {
+    const updateSong = await db.one(
+      "UPDATE songs SET name=$1, artist=$2,album=$3,time=$4,is_favorite=$5  WHERE id=$6 RETURNING *",
+      [
+        name,
+        artist,
+        album,
+        time,
+        is_favorite,
+        id
+        
+     
+      ]
+    );
+    return updateSong;
+  } catch (error) {
+    return error;
+  }
+};
 
 // const updateSong=async(id)=>{
 //     try {
@@ -41,7 +66,7 @@ const destroySong=async(id)=>{
 //       return error;
 //     }
 // }
-module.exports={getAllSongs,getOneSong,createSong,destroySong}
+module.exports={getAllSongs,getOneSong,createSong,destroySong,updateSong}
 
 // (name,artist,album,time,is_favorite)VALUES($1,$2,$3,$4,$5)
 // song.name,song.artist,song.album,song.time,song.is_favorite
